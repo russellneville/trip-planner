@@ -31,6 +31,7 @@ export function AuthProvider({ children }) {
 
       await setDoc(doc(db, "users", userCredential.user.uid), {
         email,
+        emailLower: email.toLowerCase(),
         firstName,
         lastName,
         createdAt: serverTimestamp(),
@@ -57,6 +58,7 @@ export function AuthProvider({ children }) {
         doc(db, "users", result.user.uid),
         {
           email: result.user.email,
+          emailLower: result.user.email.toLowerCase(),
           name: result.user.displayName,
           lastLogin: new Date(),
         },

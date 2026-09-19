@@ -1,0 +1,91 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isTripCollaborator() {
+      return signedIn()
+        && resource.data.collaborators is list
+        && request.auth.uid in resource.data.collaborators;
+    }
+
+    function isTripOwner() {
+      return signedIn() && resource.data.ownerId == request.auth.uid;
+    }
+
+    function validUserFields() {
+      return request.resource.data.keys().hasOnly([
+        'email',
+        'emailLower',
+        'firstName',
+        'lastName',
+        'name',
+        'createdAt',
+        'lastLogin'
+      ])
+      && request.resource.data.email is string
+      && request.resource.data.emailLower is string;
+    }
+
+    function validTripFields() {
+      return request.resource.data.keys().hasOnly([
+        'destination',
+        'dates',
+        'activities',
+        'totalDays',
+        'totalBudget',
+        'mapCenter',
+        'markers',
+        'ownerId',
+        'collaborators',
+        'createdAt',
+        'updatedAt'
+      ])
+      && request.resource.data.ownerId is string
+      && request.resource.data.collaborators is list
+      && request.resource.data.createdAt != null
+      && request.resource.data.updatedAt != null;
+    }
+
+    function validTripCreate() {
+      return validTripFields()
+        && request.resource.data.ownerId == request.auth.uid
+        && request.resource.data.collaborators.size() == 1
+        && request.resource.data.collaborators.hasAll([request.auth.uid]);
+    }
+
+    function protectedTripFieldsUnchanged() {
+      return request.resource.data.ownerId == resource.data.ownerId
+        && request.resource.data.createdAt == resource.data.createdAt;
+    }
+
+    function collaboratorChangeAllowed() {
+      return !request.resource.data.diff(resource.data).affectedKeys().hasAny(['collaborators'])
+        || isTripOwner();
+    }
+
+    function ownerRemainsCollaborator() {
+      return request.resource.data.ownerId in request.resource.data.collaborators;
+    }
+
+    match /users/{userId} {
+      allow read: if signedIn();
+      allow create, update: if signedIn()
+        && request.auth.uid == userId
+        && validUserFields();
+    }
+
+    match /trips/{tripId} {
+      allow create: if signedIn() && validTripCreate();
+      allow read: if isTripCollaborator();
+      allow update: if isTripCollaborator()
+        && validTripFields()
+        && protectedTripFieldsUnchanged()
+        && collaboratorChangeAllowed()
+        && ownerRemainsCollaborator();
+      allow delete: if isTripOwner();
+    }
+  }
+}
