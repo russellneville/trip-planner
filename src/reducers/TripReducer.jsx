@@ -1,4 +1,5 @@
 import { act } from "react";
+import { parseLocalDateString } from "../utils/formatDates";
 
 export const initialState = {
   destination: "",
@@ -51,8 +52,8 @@ export default function tripReducer(state, action) {
       const { destination, startDate, endDate, mapCenter, tripId } =
         action.payload;
       // Calculate dates array and total days
-      const start = new Date(startDate);
-      const end = new Date(endDate);
+      const start = parseLocalDateString(startDate);
+      const end = parseLocalDateString(endDate);
       const diffTime = Math.abs(end - start);
       const totalDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
       // Generate array of dates

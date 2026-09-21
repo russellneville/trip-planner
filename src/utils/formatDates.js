@@ -1,3 +1,21 @@
+// Parses a "YYYY-MM-DD" date-only string (e.g. from a <input type="date">) as a
+// local-timezone date instead of UTC midnight. `new Date("YYYY-MM-DD")` parses as
+// UTC, which shifts the displayed date back a day in timezones behind UTC.
+export function parseLocalDateString(dateString) {
+  const [year, month, day] = dateString.split("-").map(Number);
+  return new Date(year, month - 1, day);
+}
+
+// Formats a Date object as a local "YYYY-MM-DD" string suitable for
+// <input type="date">. Avoids toISOString(), which converts to UTC and can
+// shift the date by a day in timezones behind UTC.
+export function toDateInputValue(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
 //  Formats a Date object to a short string format: Sun, Nov 10
 export function formatDateShort(date) {
   if (!(date instanceof Date) || isNaN(date)) return "";
