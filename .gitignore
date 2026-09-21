@@ -41,6 +41,9 @@ Thumbs.db
 *.swp
 *.swo
 
+# Playwright MCP artifacts
+.playwright-mcp/
+
 # Miscellaneous
 *.pem
 *.crt
