@@ -38,7 +38,7 @@ export async function exportToPdf(destination, dates, activities) {
         <h2 style="color: #333; margin-top: 0;">Trip to ${destination.charAt(0).toUpperCase() + destination.slice(1).toLowerCase()}</h2>
         <div style="margin: 15px 0;">
           <p style="margin: 5px 0;"><strong>Duration:</strong> ${dates.length} Days</p>
-          <p style="margin: 5px 0;"><strong>Total Budget:</strong> €${totalBudget}</p>
+          <p style="margin: 5px 0;"><strong>Total Budget:</strong> $${totalBudget}</p>
         </div>
       </div>
 
@@ -54,7 +54,7 @@ export async function exportToPdf(destination, dates, activities) {
           return `
           <div style="margin: 20px 0; padding: 15px; border: 1px solid #ccc;">
             <h2>Day ${index + 1} - ${date.toLocaleDateString()}</h2>
-            <p>${dayActivities.length} Activities | €${dayBudget} Total</p>
+            <p>${dayActivities.length} Activities | $${dayBudget} Total</p>
             ${dayActivities
               .map(
                 (activity) => `
@@ -63,7 +63,7 @@ export async function exportToPdf(destination, dates, activities) {
                   activity.endTime || "No end time"
                 }</span>
                 <span>| ${activity.title}</span>
-                <span>| €${activity.price || 0}</span>
+                <span>| $${activity.price || 0}</span>
               </div>
             `
               )

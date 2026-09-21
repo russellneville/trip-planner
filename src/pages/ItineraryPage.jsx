@@ -166,7 +166,7 @@ function ItineraryPage() {
             </h1>
             <div className="trip-overview">
               <p>{totalDays} Days</p>
-              <p>Total Budget: €{totalBudget}</p>
+              <p>Total Budget: ${totalBudget}</p>
             </div>
             <div className="action-buttons">
               <button
@@ -246,7 +246,7 @@ function ItineraryPage() {
                     <h2>{formatDateForDisplay(date)}</h2>
                     <div className="day-header-info">
                       <p>
-                        {dayActivities.length} Activities | €{dayBudget} Total
+                        {dayActivities.length} Activities | ${dayBudget} Total
                       </p>
                       <div
                         className={`density-indicator density-${getDensityLevel(
@@ -267,7 +267,7 @@ function ItineraryPage() {
                         </span>
                         <span className="activity-title">{activity.title}</span>
                         <span className="activity-price">
-                          €{activity.price || 0}
+                          ${activity.price || 0}
                         </span>
                       </div>
                     ))}

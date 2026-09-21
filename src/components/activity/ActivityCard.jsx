@@ -65,7 +65,7 @@ export default function ActivityCard({
           placeholder="Description"
         />
         <div className="price-container">
-          <span className="price-symbol">€</span>
+          <span className="price-symbol">$</span>
           <input
             type="number"
             value={activity.price || ""}

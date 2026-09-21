@@ -170,7 +170,7 @@
   scale: 0.98;
 }
 
-/* includes total of activities, € and density indicator */
+/* includes total of activities, $ and density indicator */
 .day-header-info {
   display: flex;
   align-items: center;
