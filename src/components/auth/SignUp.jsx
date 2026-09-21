@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { FcGoogle } from "react-icons/fc";
 import { useAuth } from "../../contexts/AuthContext";
 import "../../styles/Auth.css";
 
 export default function SignUp() {
-  const { signup, error, loading, dispatch } = useAuth();
+  const { signup, loginWithGoogle, error, loading, dispatch } = useAuth();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -50,6 +51,24 @@ export default function SignUp() {
       }
     } finally {
       dispatch({ type: "SET_LOADING", payload: false });
+    }
+  }
+
+  // ******************************************************
+
+  async function handleGoogleSignUp() {
+    try {
+      dispatch({ type: "SET_ERROR", payload: "" });
+      await loginWithGoogle();
+      navigate("/dashboard");
+    } catch (error) {
+      console.error("Google sign-up error:", error);
+      if (error.code !== "auth/popup-closed-by-user") {
+        dispatch({
+          type: "SET_ERROR",
+          payload: "Failed to sign up with Google. Please try again.",
+        });
+      }
     }
   }
 
@@ -105,6 +124,14 @@ export default function SignUp() {
       <div className="auth-divider">
         <span>or</span>
       </div>
+
+      <button
+        type="button"
+        className="google-btn"
+        onClick={handleGoogleSignUp}
+      >
+        <FcGoogle size={20} /> Sign up with Google
+      </button>
 
       <p className="auth-redirect">
         Already have an account? <Link to="/login">Login</Link>
