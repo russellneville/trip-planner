@@ -6,12 +6,14 @@ import {
   getCitySuggestions,
   getPlaceDetails,
 } from "../utils/hereMapUtils";
+import { parseLocalDateString, toDateInputValue } from "../utils/formatDates";
 import "../styles/HomePage.css";
 
 export default function HomePage() {
   const { state, dispatch } = useTrip(); // useTrip is defined in TripContext.jsx (includes error handling)
   const navigate = useNavigate();
   const suggestionsRef = useRef(null);
+  const endDateRef = useRef(null);
 
   useEffect(() => {
     dispatch({ type: "RESET_STATE" });
@@ -66,6 +68,22 @@ export default function HomePage() {
         },
       });
     }
+  };
+
+  // ******************************************************
+
+  const handleStartDateChange = (e) => {
+    const startValue = e.target.value;
+    const endInput = endDateRef.current;
+    if (!startValue || !endInput) return;
+
+    // Only auto-advance the end date if it's empty or no longer after the
+    // new start date, so we don't clobber an end date the user already chose.
+    if (endInput.value && endInput.value > startValue) return;
+
+    const nextDay = parseLocalDateString(startValue);
+    nextDay.setDate(nextDay.getDate() + 1);
+    endInput.value = toDateInputValue(nextDay);
   };
 
   // ******************************************************
@@ -168,12 +186,19 @@ export default function HomePage() {
               type="date"
               name="startDate"
               placeholder="Start date"
+              onChange={handleStartDateChange}
               required
             />
           </div>
           <div>
             <p>End date</p>
-            <input type="date" name="endDate" placeholder="End date" required />
+            <input
+              type="date"
+              name="endDate"
+              placeholder="End date"
+              ref={endDateRef}
+              required
+            />
           </div>
         </div>
         <button type="submit">Plan trip</button>
