@@ -75,6 +75,15 @@ service cloud.firestore {
       allow create, update: if signedIn()
         && request.auth.uid == userId
         && validUserFields();
+
+      // Trips are saved as a subcollection under their owner (see
+      // saveTrip/getUserTrips in src/utils/firestoreUtils.js), separate from
+      // the top-level, owner/collaborator-based `trips` collection below
+      // (which nothing currently writes to). Only the owning user can
+      // read or write their own trips here.
+      match /trips/{tripId} {
+        allow read, write: if signedIn() && request.auth.uid == userId;
+      }
     }
 
     match /trips/{tripId} {
