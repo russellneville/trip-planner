@@ -196,7 +196,12 @@ export default function ActivityForm({ date }) {
             placeholder="Add time"
           />
         </div>
-        <input type="number" name="price" id="price" placeholder="Add cost" />
+        <input
+          type="number"
+          name="price"
+          id="price"
+          placeholder="Add cost per person"
+        />
       </div>
 
       <button type="submit">Add Plan</button>
