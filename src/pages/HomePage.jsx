@@ -96,17 +96,27 @@ export default function HomePage() {
       endDate: e.target.endDate.value,
       mapCenter: state.mapCenter,
     };
-    // Get coordinates for the destination
-    const suggestions = await getAutocompleteSuggestions(formData.destination);
-    if (suggestions.length > 0) {
-      const placeDetails = await getPlaceDetails(suggestions[0].id);
-      if (placeDetails && placeDetails.position) {
-        formData.mapCenter = {
-          lat: placeDetails.position.lat,
-          lng: placeDetails.position.lng,
-        };
+
+    // Only geocode here if the user typed a destination without picking one
+    // of the suggestions (which already sets state.mapCenter precisely).
+    // Re-geocoding unconditionally overwrote the correct suggestion-based
+    // center with an unrelated nearby match, since this lookup wasn't
+    // biased toward the destination and defaulted to searching near Berlin.
+    if (!formData.mapCenter) {
+      const suggestions = await getAutocompleteSuggestions(
+        formData.destination
+      );
+      if (suggestions.length > 0) {
+        const placeDetails = await getPlaceDetails(suggestions[0].id);
+        if (placeDetails && placeDetails.position) {
+          formData.mapCenter = {
+            lat: placeDetails.position.lat,
+            lng: placeDetails.position.lng,
+          };
+        }
       }
     }
+
     dispatch({
       type: "SET_TRIP_DETAILS",
       payload: formData,
