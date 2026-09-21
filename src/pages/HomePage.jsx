@@ -1,16 +1,23 @@
 import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTrip } from "../contexts/TripContext";
+import { useAuth } from "../contexts/AuthContext";
 import {
   getAutocompleteSuggestions,
   getCitySuggestions,
   getPlaceDetails,
 } from "../utils/hereMapUtils";
-import { parseLocalDateString, toDateInputValue } from "../utils/formatDates";
+import {
+  parseLocalDateString,
+  toDateInputValue,
+  computeTripDateRange,
+} from "../utils/formatDates";
+import { saveTrip } from "../utils/firestoreUtils";
 import "../styles/HomePage.css";
 
 export default function HomePage() {
   const { state, dispatch } = useTrip(); // useTrip is defined in TripContext.jsx (includes error handling)
+  const { currentUser } = useAuth();
   const navigate = useNavigate();
   const suggestionsRef = useRef(null);
   const endDateRef = useRef(null);
@@ -114,6 +121,28 @@ export default function HomePage() {
             lng: placeDetails.position.lng,
           };
         }
+      }
+    }
+
+    // Save the trip immediately so it shows up under "My Trips" right away,
+    // rather than only once the user later visits Itinerary and clicks Save.
+    if (currentUser) {
+      try {
+        const { dates, totalDays } = computeTripDateRange(
+          formData.startDate,
+          formData.endDate
+        );
+        const tripId = await saveTrip(currentUser.uid, {
+          destination: formData.destination,
+          dates,
+          totalDays,
+          activities: {},
+          mapCenter: formData.mapCenter,
+          dayLocations: {},
+        });
+        formData.tripId = tripId;
+      } catch (error) {
+        console.error("Error saving trip:", error);
       }
     }
 

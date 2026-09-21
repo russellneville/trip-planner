@@ -1,12 +1,13 @@
 import { useTrip } from "../../contexts/TripContext";
 import ActivityCard from "./ActivityCard";
+import { sortActivitiesByTime } from "../../utils/sortActivities";
 import "../../styles/ActivityList.css";
 
 export default function ActivityList({ date }) {
   const { state, dispatch } = useTrip();
 
-  // Get activities for this date
-  const activities = state.activities[date] || [];
+  // Get activities for this date, earliest start time first (undated last)
+  const activities = sortActivitiesByTime(state.activities[date] || []);
 
   // Calculate the starting index for this day's activities
   const getGlobalIndex = (localIndex) => {

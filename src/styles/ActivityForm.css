@@ -84,6 +84,17 @@
   width: 100%;
 }
 
+/* Remove spinner arrows from number input */
+.activity-form-time-price input[type="number"]::-webkit-inner-spin-button,
+.activity-form-time-price input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.activity-form-time-price input[type="number"] {
+  -moz-appearance: textfield;
+}
+
 /* ACTIVITY CARD */
 
 .start-time p,

@@ -43,15 +43,9 @@ export default function SavedTripsPage() {
         totalDays: trip.totalDays,
         mapCenter: trip.mapCenter,
         tripId: trip.id,
+        dayLocations: trip.dayLocations || {},
       },
     });
-
-    if (trip.markers) {
-      tripDispatch({
-        type: "SET_MARKERS",
-        payload: trip.markers,
-      });
-    }
 
     tripDispatch({
       type: "SET_ACTIVITIES",

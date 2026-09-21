@@ -18,16 +18,19 @@ export default function ActivityCard({
         {/* Show number for all activities */}
         <div className="activity-number">{index + 1}</div>
 
-        <input
-          value={activity.title || ""}
-          onChange={(e) =>
-            handleEditActivity(activity, "title", e.target.value)
-          }
-          onBlur={(e) => handleEditActivity(activity, "title", e.target.value)}
-          onKeyDown={(e) => handleKeyDown(e, activity, "title")}
-          placeholder="Plan title"
-        />
-        <div className="time-inputs">
+        <div className="activity-card-row">
+          <input
+            className="activity-title-input"
+            value={activity.title || ""}
+            onChange={(e) =>
+              handleEditActivity(activity, "title", e.target.value)
+            }
+            onBlur={(e) =>
+              handleEditActivity(activity, "title", e.target.value)
+            }
+            onKeyDown={(e) => handleKeyDown(e, activity, "title")}
+            placeholder="Plan title"
+          />
           <input
             type="time"
             value={activity.startTime || ""}
@@ -53,31 +56,35 @@ export default function ActivityCard({
             placeholder="End time"
           />
         </div>
-        <input
-          value={activity.description || ""}
-          onChange={(e) =>
-            handleEditActivity(activity, "description", e.target.value)
-          }
-          onBlur={(e) =>
-            handleEditActivity(activity, "description", e.target.value)
-          }
-          onKeyDown={(e) => handleKeyDown(e, activity, "description")}
-          placeholder="Description"
-        />
-        <div className="price-container">
-          <span className="price-symbol">$</span>
+        <div className="activity-card-row">
           <input
-            type="number"
-            value={activity.price || ""}
+            className="activity-description-input"
+            value={activity.description || ""}
             onChange={(e) =>
-              handleEditActivity(activity, "price", e.target.value)
+              handleEditActivity(activity, "description", e.target.value)
             }
             onBlur={(e) =>
-              handleEditActivity(activity, "price", e.target.value)
+              handleEditActivity(activity, "description", e.target.value)
             }
-            onKeyDown={(e) => handleKeyDown(e, activity, "price")}
-            placeholder="Price"
+            onKeyDown={(e) => handleKeyDown(e, activity, "description")}
+            placeholder="Description"
           />
+          <div className="price-container">
+            <span className="price-symbol">$</span>
+            <input
+              type="number"
+              value={activity.price || ""}
+              onChange={(e) =>
+                handleEditActivity(activity, "price", e.target.value)
+              }
+              onBlur={(e) =>
+                handleEditActivity(activity, "price", e.target.value)
+              }
+              onKeyDown={(e) => handleKeyDown(e, activity, "price")}
+              placeholder="Price"
+            />
+            <span className="price-per-person">per person</span>
+          </div>
         </div>
       </div>
 

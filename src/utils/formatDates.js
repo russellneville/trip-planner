@@ -1,9 +1,31 @@
 // Parses a "YYYY-MM-DD" date-only string (e.g. from a <input type="date">) as a
 // local-timezone date instead of UTC midnight. `new Date("YYYY-MM-DD")` parses as
 // UTC, which shifts the displayed date back a day in timezones behind UTC.
-export function parseLocalDateString(dateString) {
-  const [year, month, day] = dateString.split("-").map(Number);
+// Some callers (restoring a saved trip or a guest session) already have a
+// Date object at this point, so pass those through unchanged.
+export function parseLocalDateString(dateInput) {
+  if (dateInput instanceof Date) return dateInput;
+  const [year, month, day] = dateInput.split("-").map(Number);
   return new Date(year, month - 1, day);
+}
+
+// Computes the inclusive array of trip dates and total day count from a
+// start/end date (string or Date). Shared by TripReducer's SET_TRIP_DETAILS
+// and any code that needs to know a trip's day count before dispatching.
+export function computeTripDateRange(startDate, endDate) {
+  const start = parseLocalDateString(startDate);
+  const end = parseLocalDateString(endDate);
+  const diffTime = Math.abs(end - start);
+  const totalDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+
+  const dates = [];
+  for (let i = 0; i < totalDays; i++) {
+    const currentDate = new Date(start);
+    currentDate.setDate(start.getDate() + i);
+    dates.push(new Date(currentDate));
+  }
+
+  return { dates, totalDays };
 }
 
 // Formats a Date object as a local "YYYY-MM-DD" string suitable for

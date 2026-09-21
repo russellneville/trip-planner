@@ -1,9 +1,10 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTrip } from "../../contexts/TripContext";
 import {
   getAutocompleteSuggestions,
   getPlaceDetails,
 } from "../../utils/hereMapUtils";
+import { computeDayLocations } from "../../utils/dayLocations";
 import "../../styles/ActivityForm.css";
 
 export default function ActivityForm({ date }) {
@@ -11,17 +12,35 @@ export default function ActivityForm({ date }) {
 
   const { state, dispatch } = useTrip();
   const suggestionsRef = useRef(null);
+  // Bias activity search toward this day's resolved location, not
+  // necessarily the trip's original destination, for trips that move
+  // between places (see utils/dayLocations.js).
+  const dayMapCenter =
+    computeDayLocations(
+      state.dates,
+      state.dayLocations,
+      state.destination,
+      state.mapCenter
+    )[date]?.mapCenter || state.mapCenter;
+  // Geo position for the currently drafted activity, picked up when the user
+  // selects a place suggestion. Kept out of Redux/context state until the
+  // activity is actually submitted, since it's attached directly onto the
+  // activity object (see handleActivityFormSubmit) rather than tracked in a
+  // separate markers list, so the map marker's number always matches the
+  // activity card's number.
+  const [pendingMarker, setPendingMarker] = useState(null);
 
   // ******************************************************
 
   const handleTitleChange = async (e) => {
     const query = e.target.value;
     dispatch({ type: "SET_ACTIVITY_INPUT", payload: { activityInput: query } });
+    setPendingMarker(null);
 
     if (query.length >= 2) {
       const suggestions = await getAutocompleteSuggestions(
         query,
-        state.mapCenter
+        dayMapCenter
       );
       dispatch({ type: "SET_ACTIVITY_SUGGESTIONS", payload: { suggestions } });
     } else {
@@ -48,16 +67,15 @@ export default function ActivityForm({ date }) {
       payload: { suggestions: [] },
     });
 
-    // Get place details and add marker
+    // Get place details and stage the marker for this activity
     const placeDetails = await getPlaceDetails(suggestion.id);
 
     if (placeDetails && placeDetails.position) {
-      const marker = {
+      setPendingMarker({
         lat: placeDetails.position.lat,
         lng: placeDetails.position.lng,
         title: suggestion.title,
-      };
-      dispatch({ type: "ADD_MARKER", payload: { marker } });
+      });
     }
   };
 
@@ -85,6 +103,7 @@ export default function ActivityForm({ date }) {
       startTime,
       endTime,
       price: Number(price),
+      ...(pendingMarker && { marker: pendingMarker }),
     };
 
     dispatch({
@@ -98,6 +117,7 @@ export default function ActivityForm({ date }) {
     // clear form
     e.target.reset();
     dispatch({ type: "SET_ACTIVITY_INPUT", payload: { activityInput: "" } });
+    setPendingMarker(null);
   }
 
   // ******************************************************
@@ -204,7 +224,7 @@ export default function ActivityForm({ date }) {
         />
       </div>
 
-      <button type="submit">Add Plan</button>
+      <button type="submit">Add Activity</button>
     </form>
   );
 }

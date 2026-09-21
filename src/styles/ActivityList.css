@@ -1,14 +1,14 @@
 .activity-list {
-  margin-top: 20px;
+  margin-top: 10px;
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 6px;
 }
 
 .activity-card-container {
   display: flex;
   align-items: flex-start;
-  gap: 12px;
+  gap: 6px;
   width: 98%;
   transition: all 0.3s ease;
 }
@@ -16,28 +16,26 @@
 .activity-card {
   position: relative;
   background: var(--light-green-color);
-  padding: 20px;
-  border-radius: 8px;
+  padding: 10px 12px;
+  border-radius: 6px;
   flex: 1;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-bottom: 12px;
+  gap: 4px;
 }
 
 .activity-card:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  transform: translateY(-2px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
 }
 
 /* Input Styles */
 .activity-card input {
   border: 1px solid transparent;
   border-radius: 4px;
-  padding: 2px 12px;
-  font-size: 0.95rem;
+  padding: 1px 8px;
+  font-size: 0.85rem;
   background: var(--light-green-color);
   transition: all 0.2s ease;
   font-family: inherit;
@@ -51,40 +49,45 @@
   outline: none;
   border-color: var(--green-color);
   background-color: white;
-  box-shadow: 0 0 0 3px rgba(19, 104, 80, 0.1);
+  box-shadow: 0 0 0 2px rgba(19, 104, 80, 0.1);
 }
 
-/* Title Input */
-.activity-card input[placeholder="Plan title"] {
-  font-size: 1.2rem;
+/* Top row: title + start/end time */
+.activity-card-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.activity-title-input {
+  flex: 1;
+  font-size: 1rem;
   font-weight: 500;
   color: var(--dark-green-color);
 }
 
-/* Time Inputs Container */
-.time-inputs {
-  display: flex;
-  gap: 20px;
-}
-
-/* Time Input Specific Styles */
-.time-inputs input {
-  width: 100px;
+.activity-card-row input[type="time"] {
+  width: 112px;
+  padding: 1px 4px;
   color: #666;
-  font-size: 1rem;
+  font-size: 0.8rem;
+  flex-shrink: 0;
 }
 
 /* Description Input */
-.activity-card input[placeholder="Description"] {
+.activity-description-input {
+  flex: 1;
+  min-width: 0;
   color: #555;
-  font-size: 1rem;
+  font-size: 0.8rem;
 }
 
 /* Price Input */
 .activity-card input[type="number"] {
-  width: 120px;
+  width: 56px;
   color: var(--dark-green-color);
-  font-size: 1rem;
+  font-size: 0.8rem;
+  text-align: right;
 }
 
 /* Remove arrows from number input */
@@ -98,14 +101,14 @@
 .activity-card-icons {
   display: flex;
   align-items: center;
-  padding: 20px 10px;
+  padding: 10px 4px;
 }
 
 /* Delete Icon */
 .remove-activity-icon {
   cursor: pointer;
-  font-size: 2rem;
-  padding: 8px;
+  font-size: 1.4rem;
+  padding: 5px;
   border-radius: 50%;
   transition: all 0.2s ease;
   background-color: rgba(220, 53, 69, 0.1);
@@ -130,16 +133,11 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
-  .activity-card {
-    padding: 15px;
+  .activity-card-row {
+    flex-wrap: wrap;
   }
 
-  .time-inputs {
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .time-inputs input {
+  .activity-card-row input[type="time"] {
     width: 100%;
   }
 }
@@ -149,62 +147,46 @@
   position: relative;
   display: flex;
   align-items: center;
-  width: 120px;
+  width: fit-content;
+  flex-shrink: 0;
 }
 
 .price-symbol {
   position: absolute;
-  left: 10px;
+  left: 6px;
   color: #666;
   pointer-events: none;
+  font-size: 0.8rem;
 }
 
 .price-container input {
-  padding-left: 25px !important;
-  width: 100%;
+  padding-left: 16px !important;
+  padding-right: 4px !important;
 }
 
-/* marker number */
-.activity-marker-number {
-  background-color: #4285f4;
-  color: white;
-  border-radius: 50%;
-  width: 24px;
-  height: 24px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 8px;
-  font-weight: bold;
-  font-size: 14px;
-}
-
-.activity-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+.price-per-person {
+  margin-left: 6px;
+  color: #666;
+  font-size: 0.75rem;
+  white-space: nowrap;
 }
 
 .activity-number {
   position: absolute;
-  top: -12px;
-  left: -12px;
+  top: -8px;
+  left: -8px;
   background-color: #4285f4;
   color: white;
   border-radius: 50%;
-  width: 28px;
-  height: 28px;
+  width: 20px;
+  height: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: bold;
-  font-size: 14px;
+  font-size: 11px;
   border: 2px solid white;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   z-index: 1;
-}
-
-.activity-content {
-  margin-left: 34px;
 }
 

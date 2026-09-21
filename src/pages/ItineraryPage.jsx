@@ -51,7 +51,7 @@ function ItineraryPage() {
         activities,
         totalDays,
         mapCenter: state.mapCenter,
-        markers: state.markers,
+        dayLocations: state.dayLocations,
       };
       localStorage.setItem("guestTripData", JSON.stringify(guestTripData));
       navigate("/login");
@@ -67,7 +67,7 @@ function ItineraryPage() {
         totalDays,
         totalBudget,
         mapCenter: state.mapCenter,
-        markers: state.markers,
+        dayLocations: state.dayLocations,
       };
 
       // If tripId exists, update the existing trip
@@ -203,7 +203,7 @@ function ItineraryPage() {
                       activities,
                       totalDays,
                       mapCenter: state.mapCenter,
-                      markers: state.markers,
+                      dayLocations: state.dayLocations,
                     };
                     localStorage.setItem(
                       "guestTripData",
