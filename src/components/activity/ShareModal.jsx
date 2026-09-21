@@ -55,7 +55,7 @@ export default function ShareModal({ onClose }) {
                 </h4>
                 {dayActivities.map((activity, actIndex) => (
                   <div key={actIndex} className="activity-preview">
-                    {activity.startTime} - {activity.title} (€
+                    {activity.startTime} - {activity.title} ($
                     {activity.price || 0})
                   </div>
                 ))}

@@ -41,7 +41,7 @@ export default function TripCard({ trip, onView, onDelete }) {
           </div>
           <div className="stat">
             <span className="stat-label">Budget</span>
-            <span className="stat-value">€{totalBudget}</span>
+            <span className="stat-value">${totalBudget}</span>
           </div>
         </div>
 
