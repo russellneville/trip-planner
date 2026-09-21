@@ -21,27 +21,22 @@ export function AuthProvider({ children }) {
   const [state, dispatch] = useReducer(authReducer, initialState);
 
   async function signup(email, password, firstName, lastName) {
-    try {
-      dispatch({ type: "SET_ERROR", payload: null });
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
+    dispatch({ type: "SET_ERROR", payload: null });
+    const userCredential = await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
 
-      await setDoc(doc(db, "users", userCredential.user.uid), {
-        email,
-        emailLower: email.toLowerCase(),
-        firstName,
-        lastName,
-        createdAt: serverTimestamp(),
-      });
+    await setDoc(doc(db, "users", userCredential.user.uid), {
+      email,
+      emailLower: email.toLowerCase(),
+      firstName,
+      lastName,
+      createdAt: serverTimestamp(),
+    });
 
-      return userCredential;
-    } catch (error) {
-      dispatch({ type: "SET_ERROR", payload: error.message });
-      throw error;
-    }
+    return userCredential;
   }
 
   function login(email, password) {
@@ -51,24 +46,19 @@ export function AuthProvider({ children }) {
 
   async function loginWithGoogle() {
     const provider = new GoogleAuthProvider();
-    try {
-      dispatch({ type: "SET_ERROR", payload: null });
-      const result = await signInWithPopup(auth, provider);
-      await setDoc(
-        doc(db, "users", result.user.uid),
-        {
-          email: result.user.email,
-          emailLower: result.user.email.toLowerCase(),
-          name: result.user.displayName,
-          lastLogin: new Date(),
-        },
-        { merge: true }
-      );
-      return result;
-    } catch (error) {
-      dispatch({ type: "SET_ERROR", payload: error.message });
-      throw error;
-    }
+    dispatch({ type: "SET_ERROR", payload: null });
+    const result = await signInWithPopup(auth, provider);
+    await setDoc(
+      doc(db, "users", result.user.uid),
+      {
+        email: result.user.email,
+        emailLower: result.user.email.toLowerCase(),
+        name: result.user.displayName,
+        lastLogin: new Date(),
+      },
+      { merge: true }
+    );
+    return result;
   }
 
   function logout() {
