@@ -1,5 +1,5 @@
 import { act } from "react";
-import { parseLocalDateString } from "../utils/formatDates";
+import { computeTripDateRange } from "../utils/formatDates";
 
 export const initialState = {
   destination: "",
@@ -14,7 +14,10 @@ export const initialState = {
   activities: {},
   suggestions: [],
   mapCenter: null,
-  markers: [],
+  // Sparse map of ISO date string -> { destination, mapCenter } override for
+  // trips that move between places. Days without an entry inherit the most
+  // recent prior override (see utils/dayLocations.js).
+  dayLocations: {},
   isLoading: false,
   error: null,
   tripId: null,
@@ -49,20 +52,9 @@ export default function tripReducer(state, action) {
       };
     }
     case "SET_TRIP_DETAILS": {
-      const { destination, startDate, endDate, mapCenter, tripId } =
+      const { destination, startDate, endDate, mapCenter, tripId, dayLocations } =
         action.payload;
-      // Calculate dates array and total days
-      const start = parseLocalDateString(startDate);
-      const end = parseLocalDateString(endDate);
-      const diffTime = Math.abs(end - start);
-      const totalDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
-      // Generate array of dates
-      const dates = [];
-      for (let i = 0; i < totalDays; i++) {
-        const currentDate = new Date(start);
-        currentDate.setDate(start.getDate() + i);
-        dates.push(new Date(currentDate));
-      }
+      const { dates, totalDays } = computeTripDateRange(startDate, endDate);
       return {
         ...state,
         destination,
@@ -72,13 +64,24 @@ export default function tripReducer(state, action) {
         endDate,
         mapCenter: mapCenter || state.mapCenter,
         tripId: tripId || state.tripId,
+        dayLocations: dayLocations || state.dayLocations,
       };
     }
-    case "SET_MARKERS": {
+    case "SET_DAY_LOCATION": {
+      const { date, destination, mapCenter } = action.payload;
       return {
         ...state,
-        markers: action.payload,
+        dayLocations: {
+          ...state.dayLocations,
+          [date]: { destination, mapCenter },
+        },
       };
+    }
+    case "REMOVE_DAY_LOCATION": {
+      const { date } = action.payload;
+      const dayLocations = { ...state.dayLocations };
+      delete dayLocations[date];
+      return { ...state, dayLocations };
     }
     case "SET_ACTIVITY_INPUT": {
       const { activityInput } = action.payload;
@@ -92,13 +95,6 @@ export default function tripReducer(state, action) {
       return {
         ...state,
         activitySuggestions: suggestions,
-      };
-    }
-    case "ADD_MARKER": {
-      const { marker } = action.payload;
-      return {
-        ...state,
-        markers: [...state.markers, marker],
       };
     }
     case "ADD_ACTIVITY": {

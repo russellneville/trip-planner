@@ -24,15 +24,9 @@ export default function Login() {
           startDate: new Date(tripData.dates[0]),
           endDate: new Date(tripData.dates[tripData.dates.length - 1]),
           mapCenter: tripData.mapCenter,
+          dayLocations: tripData.dayLocations || {},
         },
       });
-
-      if (tripData.markers) {
-        tripDispatch({
-          type: "SET_MARKERS",
-          payload: tripData.markers,
-        });
-      }
 
       tripDispatch({
         type: "SET_ACTIVITIES",

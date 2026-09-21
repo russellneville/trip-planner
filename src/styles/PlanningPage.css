@@ -66,6 +66,28 @@
   color: inherit;
 }
 
+.day-list-location {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: normal;
+  opacity: 0.75;
+}
+
+.transition-marker {
+  font-size: 0.7rem;
+  font-weight: bold;
+  color: var(--dark-green-color);
+  padding: 0 0.5rem 0.3rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.days-sidebar li.transition-day {
+  border-top: 2px dashed var(--green-color);
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+}
+
 /* buttons on sidebar left*/
 
 .manage-trip-button,
